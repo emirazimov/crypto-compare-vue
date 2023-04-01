@@ -97,7 +97,7 @@
           <div
             v-for="t of tickers"
             v-bind:key="t.name"
-            @click="sel = t"
+            @click="select(t)"
             :class="{ 'border-4': sel === t }"
             class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
@@ -138,9 +138,10 @@
         </h3>
         <div class="flex items-end border-gray-600 border-b border-l h-64">
           <div
-            v-for="(bar, idx) in graph"
+            v-for="(bar, idx) in normalizeGraph()"
             :key="idx"
-            class="bg-purple-800 border w-10 h-24"
+            :style="{ height: `${bar}%` }"
+            class="bg-purple-800 border w-10"
           ></div>
         </div>
         <button
@@ -210,12 +211,25 @@ export default {
         if (this.sel.name === currentTicker.name) {
           this.graph.push(data.USD)
         }
-      }, 3000)
+      }, 5000)
       console.log(this)
+    },
+
+    select(ticker) {
+      this.sel = ticker
+      this.graph = []
     },
 
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove)
+    },
+
+    normalizeGraph() {
+      const maxValue = Math.max(...this.graph)
+      const minValue = Math.min(...this.graph)
+      return this.graph.map(
+        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
+      )
     },
   },
 }
