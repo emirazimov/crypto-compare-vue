@@ -188,6 +188,14 @@ export default {
     }
   },
 
+  created() {
+    const tickersData = localStorage.getItem("cryptonomicon-list")
+
+    if (tickersData) {
+      this.tickers = JSON.parse(tickersData)
+    }
+  },
+
   methods: {
     add() {
       const currentTicker = {
@@ -197,6 +205,8 @@ export default {
 
       this.tickers.push(currentTicker)
       this.ticker = ""
+
+      localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers))
 
       setInterval(async () => {
         const f = await fetch(
